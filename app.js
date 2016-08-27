@@ -38,11 +38,12 @@ bot.on("message", function(msg) {
 		unflip: "┬──┬ ノ( ゜-゜ノ)",
 		poundsign: "Let's all take a moment and reflect on the fact that Tommy and Kaitlyn are to be wed under a great big #poundsign. Never forget!"
 	};
-	responseObject.prototype.help = function() {
-		return "Help: Use the '!' prefix. List of quick responses:" + Object.keys(responseObject).reduce(function(prev, curr) { return prev + "\n" + curr; }, "") + "\n!RemindMe uses the format [number] [unit] [message]\nEnter '!RemindMe help' for more info";
-	};
 	if(responseObject[msg.content.slice(1)]) {
 		bot.sendMessage(msg, responseObject[msg.content.slice(1)]);
+	}
+	else if(msg.content.startsWith(prefix + "help")) {
+		var keys = Object.keys(responseObject).reduce(function(prev, curr) { return prev + "\n" + curr; }, "")
+		bot.reply(msg, "Help: Use the '!' prefix. List of quick auto-replies:" + keys + "\n!RemindMe uses the format [number] [unit] [message], enter '!RemindMe help' for more info");
 	}
 	else if(msg.content.startsWith(prefix + "RemindMe") || msg.content.startsWith(prefix + "remindme")) {
 		var help = "Format: '!RemindMe [number] [units] [message]' Units can be seconds, minutes, hours, days, weeks, months, or years.\nFor shorthand, use s = seconds, mi = minutes, h = hours, d = days, m = months, y = years.";
