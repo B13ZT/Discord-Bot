@@ -1,6 +1,8 @@
+﻿const Discord = require("discord.js");
 
 const bot = new Discord.Client();
 
+const token = "INSERT_TOKEN_HERE";
 
 bot.on("ready", ()=>{console.log(`Bot Ready: Number of channels: ${bot.channels.length}, Number of Servers: ${bot.servers.length}, Number of users: ${bot.users.length}`);});
 bot.on("error", e => { console.error(e); });
