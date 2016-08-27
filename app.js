@@ -4,7 +4,7 @@ const bot = new Discord.Client();
 
 const token = "INSERT_TOKEN_HERE";
 
-bot.on("ready", ()=>{console.log(`Bot Ready: Number of channels: ${bot.channels.length}, Number of Servers: ${bot.servers.length}, Number of users: ${bot.users.length}`);});
+bot.on("ready", ()=>{ console.log(`Bot Ready: Number of channels: ${bot.channels.length}, Number of Servers: ${bot.servers.length}, Number of users: ${bot.users.length}`);});
 bot.on("error", e => { console.error(e); });
 bot.on("warn", e => { console.warn(e); });
 bot.on("debug", e => { console.info(e); });
@@ -12,29 +12,40 @@ bot.on("debug", e => { console.info(e); });
 bot.on("message", function(msg) {
 
 	var  prefix = "!";
+
 	
-	// Checks if message starts with prefix. If not, ends
-	 if(!msg.content.startsWith(prefix)) return;
-	// Makes sure author is not another bot. Prevents botception         
+	// Makes sure author is not another bot. Prevents botception
 	if(msg.author.bot) return;
 
-	// Preset one word -> response messages	
+	// Alternate Prefixes (Replaces alternate prefixes with standard "!" so that they may be processed)
+	var altPrefixes = ["#"];
+	altPrefixes.forEach(function(alt) {
+		if(msg.content.startsWith(alt))
+			msg.content = "!" + msg.content.slice(1);
+	});
+
+	// Checks if message starts with prefix. If not, ends
+	if(!msg.content.startsWith(prefix)) return;
+	
+	// Preset one word -> response messages
 	var responseObject = {
-		help: `Help: Use the "!" Prefix for all commands. List of quick responses: ayy, ping, foo, lenny, shrug, tableflip, unflip. !RemindMe uses the format [number] [unit] [message]. Type !RemindMe help for more info`,
 		ayy: "Ayy, lmao!",
 		ping: "pong",
 		foo: "bar",
 		lenny: "( ͡° ͜ʖ ͡°)",
 		shrug: "¯\\_(ツ)_/¯",
 		tableflip: "(╯°□°）╯︵ ┻━┻",
-		unflip: "┬──┬ ノ( ゜-゜ノ)"
+		unflip: "┬──┬ ノ( ゜-゜ノ)",
+		poundsign: "Let's all take a moment and reflect on the fact that Tommy and Kaitlyn are to be wed under a great big #poundsign. Never forget!"
+	};
+	responseObject.prototype.help = function() {
+		return "Help: Use the '!' prefix. List of quick responses:" + Object.keys(responseObject).reduce(function(prev, curr) { return prev + "\n" + curr; }, "") + "\n!RemindMe uses the format [number] [unit] [message]\nEnter '!RemindMe help' for more info";
 	};
 	if(responseObject[msg.content.slice(1)]) {
 		bot.sendMessage(msg, responseObject[msg.content.slice(1)]);
 	}
 	else if(msg.content.startsWith(prefix + "RemindMe") || msg.content.startsWith(prefix + "remindme")) {
-		var help = `Format: "!RemindMe [number] [units] [message]". Units can be seconds, minutes, hours, days, weeks, months, or years. For shorthand, use s = seconds, mi = minutes, h = hours, d = days, m = months, y = years.`;
-
+		var help = "Format: '!RemindMe [number] [units] [message]' Units can be seconds, minutes, hours, days, weeks, months, or years.\nFor shorthand, use s = seconds, mi = minutes, h = hours, d = days, m = months, y = years.";
 		var args = msg.content.split(" ");
 		if(args[1] === "help" || args[1] === "Help" || args[1] === "HELP" || args.length < 3) {
 			bot.reply(msg, help);
@@ -72,11 +83,13 @@ bot.on("message", function(msg) {
 });
 
 function output(error, token) {
-        if (error) {
-                console.log('There was an error logging in: ' + error);
-                return;
-        } else
-                console.log('Logged in. Token: ' + token);
+
+	if (error) {
+		console.log('There was an error logging in: ' + error);
+		return;
+	}
+	else
+		console.log('Logged in. Token: ' + token);
 }
 
 bot.loginWithToken(token, output);
