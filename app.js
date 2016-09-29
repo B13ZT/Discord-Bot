@@ -17,6 +17,14 @@ bot.on("message", function(msg) {
 	// Makes sure author is not another bot. Prevents botception
 	if(msg.author.bot) return;
 
+	// Gets Subreddit info (regardless if prefix exists)
+	if(msg.content.indexOf("/r/") != -1) {
+		var sub = msg.content.match(/\/r\/[^ .]+/);
+		if(sub !== null) {
+			bot.reply(msg, "www.reddit.com" + sub[0]);
+		}
+	}
+
 	// Alternate Prefixes (Replaces alternate prefixes with standard "!" so that they may be processed)
 	var altPrefixes = ["#"];
 	altPrefixes.forEach(function(alt) {
@@ -37,7 +45,9 @@ bot.on("message", function(msg) {
 		shrug: "¯\\_(ツ)_/¯",
 		tableflip: "(╯°□°）╯︵ ┻━┻",
 		unflip: "┬──┬ ノ( ゜-゜ノ)",
-		poundsign: "Save the date! TomKat say their I do's on September 17th 2017!"
+		poundsign: "Save the date! TomKat say their I do's on September 23th 2017!",
+		boschpartyoftwo: "Save the date! MacaBosch say their I do's on October 7th, 2017!",
+		boschpartyof2: "Save the date! MacaBosch say their I do's on October 7th, 2017!"
 	};
 	if(responseObject[msg.content]) {
 		bot.sendMessage(msg, responseObject[msg.content]);
@@ -82,20 +92,24 @@ bot.on("message", function(msg) {
 			bot.reply(msg, `Reminding you about "${reminderMessage}"`);
 		}, num);
 	}
-	else if(msg.content.startsWith("joke") {
-		fetch("https://www.reddit.com/r/jokes/top.json", {method: "GET"})
-		.then(function(r) {
-			if(r.ok) Promise.resolve(r.json());
-			else Promise.reject(r.statusText);
-		})
-		.then(function (r) {
+
+/* fetch and XMLHttpRequest are not defined
+	else if(msg.content.startsWith("joke")) {
+		var x = new XMLHttpRequest();
+		x.open("GET", "https://www.reddit.com/r/jokes/top.json", false);
+		x.send();
+		if(x.status < 300) {
+			x = JSON.parse(x.responseText);
 			var num = Math.floor(Math.random() * 25);
-			r = r.data.children[num].data;
-			var joke = { title: r.title, text: r.selftext, url: r.url };
-			bot.reply(msg, joke.title + "\n\n" + joke.text + "\n\nLink: " + joke.url;
-		})
-		.catch(function(err) { console.log("Joke Error: " + err); bot.reply(msg, "This is no time for a joke. I also can't reach /r/jokes right now, but that's besides the point. Maybe try later."); });
+			var joke  = x.data.children[num].data;
+			bot.reply(msg, joke.title + "\n\n" + joke.selftext + "\n\nLink: " + joke.url);
+		}
+		else { 
+			console.log("Joke Error: " + err);
+			bot.reply(msg, "This is no time for a joke. I also can't reach /r/jokes right now, but that's besides the point. Maybe try later.");
+		}
 	}
+*/
 });
 
 function output(error, token) {
